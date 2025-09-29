@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worst UI Login – Human Verification2</title>
+    <style>
+        body {
+            font-family: 'Impact', 'Arial', cursive;
+            background: linear-gradient(45deg, #DC143C, #8B4513, #696969);
+            color: #FFFF99;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        h1 {
+            font-family: 'Impact', sans-serif;
+            color: #9ACD32;
+            font-size: 2.8rem;
+            text-shadow: 3px 3px 0px #DC143C;
+            text-align: center;
+            animation: glitch 2s infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes glitch {
+            0%, 100% { transform: translateX(0); }
+            10% { transform: translateX(-2px) translateY(2px); }
+            20% { transform: translateX(2px) translateY(-2px); }
+            30% { transform: translateX(-2px) translateY(2px); }
+            40% { transform: translateX(2px) translateY(-2px); }
+            50% { transform: translateX(0); }
+        }
+
+        .captcha-container {
+            background: linear-gradient(135deg, #B0E0E6, #FFFF99);
+            border: 5px solid #DC143C;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px;
+            box-shadow: 0 0 30px #8B4513;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        .captcha-text {
+            background: #696969;
+            color: #FFFF99;
+            padding: 20px;
+            border: 3px solid #DC143C;
+            font-family: 'Courier New', monospace;
+            font-size: 2rem;
+            font-weight: bold;
+            letter-spacing: 8px;
+            transform: rotate(-5deg) skew(10deg);
+            margin: 20px 0;
+            user-select: none;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        input[type="text"] {
+            background: #FFFF99;
+            color: #8B4513;
+            border: 3px solid #DC143C;
+            padding: 15px;
+            font-size: 1.5rem;
+            text-align: center;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            width: 200px;
+        }
+
+        button {
+            background: #9ACD32;
+            color: #8B4513;
+            border: 5px solid #DC143C;
+            padding: 15px 30px;
+            font-size: 1.5rem;
+            font-family: 'Impact', sans-serif;
+            cursor: pointer;
+            margin: 10px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #B0E0E6;
+            transform: scale(1.05);
+        }
+
+        .instructions {
+            color: #8B4513;
+            font-size: 1.2rem;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+
+        .loading-dots {
+            font-size: 2rem;
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+            0% { content: ''; }
+            25% { content: '.'; }
+            50% { content: '..'; }
+            75% { content: '...'; }
+            100% { content: ''; }
+        }
+
+        .error-msg {
+            color: #DC143C;
+            background: #FFFF99;
+            padding: 10px;
+            border: 2px solid #DC143C;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-weight: bold;
+            display: none;
+        }
+
+        .timer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #DC143C;
+            color: #FFFF99;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="timer" id="timer">Session expires in: 60s</div>
+    
+    <h1>🤖 AVERAGE MOSS COSPLAY 🤖</h1>
+    
+    <div class="captcha-container">
+        <div class="instructions">Please verify for me again o.o :</div>
+        <div class="instructions">(Case sensitive remember?)</div>
+        
+        <div class="captcha-text" id="captcha-display">Loading<span class="loading-dots"></span></div>
+        
+        <input type="text" id="captcha-input" placeholder="Type here..." maxlength="6">
+        
+        <div class="error-msg" id="error-msg">❌ Incorrect! Try again.</div>
+        
+        <button onclick="verifyCaptcha()">VERIFY hUmaN STATUS</button>
+        <button onclick="refreshCaptcha()">🔄 NEW CAPTCHA</button>
+    </div>
+
+    <div style="text-align: center; margin-top: 30px; color: #B0E0E6;">
+        <p>⚠️ Security Notice: This verification expires in 60 seconds ⚠️</p>
+        <p>If you fail 3 times, it is gonna be joever </p>
+    </div>
+
+    <script>
+        let currentCaptcha = '';
+        let attempts = 0;
+        let timeLeft = 60;
+        let nextPage = 'loading.html'; 
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('next')) {
+            nextPage = urlParams.get('next');
+        }
+
+        function generateCaptcha() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+            currentCaptcha = '';
+            for (let i = 0; i < 6; i++) {
+                currentCaptcha += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.getElementById('captcha-display').innerHTML = currentCaptcha;
+        }
+
+        function refreshCaptcha() {
+            document.getElementById('captcha-display').innerHTML = 'Loading<span class="loading-dots"></span>';
+            document.getElementById('error-msg').style.display = 'none';
+            setTimeout(() => {
+                generateCaptcha();
+            }, 2000); 
+        }
+
+        function verifyCaptcha() {
+            const userInput = document.getElementById('captcha-input').value;
+            const errorMsg = document.getElementById('error-msg');
+            
+            if (userInput === currentCaptcha) {
+                document.body.innerHTML = `
+                    <div style="text-align: center; padding: 50px; color: #9ACD32; font-size: 2rem;">
+                        <h1>✅ HUMAN VERIFIED!</h1>
+                        <p>Redirecting to next step...</p>
+                        <div class="loading-dots"></div>
+                    </div>
+                `;
+                setTimeout(() => {
+                    window.location.href = nextPage;
+                }, 3000);
+            } else {
+                attempts++;
+                errorMsg.style.display = 'block';
+                errorMsg.innerHTML = `❌ Incorrect! Attempt ${attempts}/3. Try again.`;
+                
+                if (attempts >= 3) {
+                    alert('Too many failed attempts! Redirecting to the beginning for security reasons.');
+                    window.location.href = 'index.html';
+                } else {
+                    refreshCaptcha();
+                }
+                document.getElementById('captcha-input').value = '';
+            }
+        }
+
+        function updateTimer() {
+            document.getElementById('timer').innerHTML = `Session expires in: ${timeLeft}s`;
+            timeLeft--;
+            
+            if (timeLeft < 0) {
+                alert('Session expired! Please start over for security reasons.');
+                window.location.href = 'index.html';
+            }
+        }
+
+        document.getElementById('captcha-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                verifyCaptcha();
+            }
+        });
+
+        setTimeout(() => {
+            generateCaptcha();
+        }, 2000);
+        
+        setInterval(updateTimer, 1000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worst UI Login – System Validation</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #3A3A3A, #4A4A4A, #2F2F2F);
+            color: #8A8A8A;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .terminal {
+            background: rgba(50, 50, 50, 0.95);
+            border: 2px solid #6A6A6A;
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 0 30px rgba(80, 80, 80, 0.5);
+        }
+
+        h1 {
+            color: #7A7A7A;
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 30px;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.4; }
+        }
+
+        .loading-line {
+            margin: 15px 0;
+            font-size: 1.1rem;
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .progress-bar {
+            background: #404040;
+            border: 1px solid #666666;
+            height: 30px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #5A5A5A, #6B6B6B);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+            position: relative;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #AAAAAA;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        }
+
+        .error {
+            color: #A05050;
+            animation: flash 0.5s infinite;
+        }
+
+        @keyframes flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .success {
+            color: #708070;
+        }
+
+        .warning {
+            color: #909060;
+        }
+
+        .dots {
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { content: ''; }
+            25% { content: '.'; }
+            50% { content: '..'; }
+            75% { content: '...'; }
+            100% { content: '....'; }
+        }
+
+        .matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.05;
+        }
+    </style>
+</head>
+<body>
+    <canvas class="matrix" id="matrix"></canvas>
+    
+    <div class="terminal">
+        <h1>HOLD UP MAINTENANCE IN PROGRESS</h1>
+        
+        <div id="loading-messages"></div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+            <div class="progress-text" id="progress-text">0%</div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px; color: #777777;">
+            <p>⚠️ DO NOT CLOSE THIS WINDOW ⚠️</p>
+            <p>Might take some time......idk if it works tho......</p>
+        </div>
+    </div>
+
+    <script>
+        const messages = [
+            { text: "► Every 60 seconds in Africa, a minute passes...", delay: 1000, type: "success" },
+            { text: "► Confirming that the floor is made of floor...", delay: 2000, type: "success" },
+            { text: "► Verifying that people die when they are killed...", delay: 3000, type: "success" },
+            { text: "► Calculating that you were born on your birthday...", delay: 4000, type: "success" },
+            { text: "► Discovering that water is wet when it's not dry...", delay: 5500, type: "warning" },
+            { text: "⚠ WARNING: The ceiling is the roof of the room", delay: 6700, type: "error" },
+            { text: "► Establishing that your height depends on how tall you are...", delay: 8000, type: "success" },
+            { text: "► Researching on how shit NIRF rankings are...", delay: 9800, type: "success" },
+            { text: "► Downloading common sense updates (0.1KB)...", delay: 11000, type: "success" },
+            { text: "► Scanning for missing brain cells...", delay: 13000, type: "warning" },
+            { text: "► Validating that 9+10=19 (sometimes 21 :) )...", delay: 15000, type: "success" },
+            { text: "► Finalizing the fact that these facts are factual...", delay: 17000, type: "success" },
+            { text: "✅ All obvious things have been obviously confirmed!", delay: 21000, type: "success" }
+        ];
+
+        let progress = 0;
+        let messageIndex = 0;
+        let nextPage = 'password.html'; 
+
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('next')) {
+            nextPage = urlParams.get('next');
+        }
+
+        function addMessage(text, type) {
+            const messagesDiv = document.getElementById('loading-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `loading-line ${type}`;
+            messageDiv.style.animationDelay = '0s';
+            messageDiv.innerHTML = text + '<span class="dots"></span>';
+            messagesDiv.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function updateProgress() {
+            const progressFill = document.getElementById('progress-fill');
+            const progressText = document.getElementById('progress-text');
+            
+            progress += Math.random() * 15 + 5;
+            if (progress > 100) progress = 100;
+            
+            progressFill.style.width = progress + '%';
+            progressText.textContent = Math.floor(progress) + '%';
+            
+            if (progress >= 100) {
+                setTimeout(() => {
+                    document.body.innerHTML = `
+                        <div style="text-align: center; padding: 50px; color: #7A7A7A; font-family: 'Courier New', monospace;">
+                            <h1>✅ VALIDATION COMPLETE</h1>
+                            <p>Obvious fact integrity: 100%</p>
+                            <p>Yeah everything is fine we are BARACK...</p>
+                            <div style="font-size: 2rem; animation: blink 1s infinite;">●</div>
+                        </div>
+                    `;
+                    setTimeout(() => {
+                        window.location.href = nextPage;
+                    }, 3000);
+                }, 2000);
+            }
+        }
+
+        // Process messages
+        messages.forEach((message, index) => {
+            setTimeout(() => {
+                addMessage(message.text, message.type);
+                updateProgress();
+            }, message.delay);
+        });
+
+        // Matrix rain effect
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}";
+        const matrixArray = matrix.split("");
+        const fontSize = 10;
+        const columns = canvas.width / fontSize;
+        const drops = [];
+
+        for (let x = 0; x < columns; x++) {
+            drops[x] = 1;
+        }
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.04)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#555';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = matrixArray[Math.floor(Math.random() * matrixArray.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 35);
+    </script>
+</body>
+</html>
