@@ -1,0 +1,93 @@
+body {
+  font-family: 'Arial', 'Courier New', monospace;
+  background: radial-gradient(circle, #696969, #8B4513);
+  color: #FFFF99;
+  margin: 0;
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+h1 {
+  font-family: 'Impact', sans-serif;
+  color: #9ACD32;
+  font-size: 3rem;
+  text-shadow: 2px 2px 0px #DC143C;
+  animation: bounce 3s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+#instructions {
+  background: #B0E0E6;
+  color: #8B4513;
+  padding: 15px;
+  border: 3px solid #DC143C;
+  margin: 15px 0 30px 0;
+  font-style: italic;
+  max-width: 600px;
+  line-height: 1.4;
+}
+
+#signupArea {
+  width: 100%;
+  max-width: 450px;
+}
+
+h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+#datePicker {
+  background: linear-gradient(45deg, #9ACD32, #B0E0E6);
+  border: 5px solid #DC143C;
+  width: 350px;
+  height: 190px;
+  margin: 0 auto;
+  border-radius: 20px;
+}
+
+#date {
+  background: #FFFF99;
+  color: #8B4513;
+  border: 3px solid #DC143C;
+  font-size: 1.5rem;
+  padding: 15px;
+  display: block;
+  margin: 0 auto 15px auto;
+  width: 350px;
+  text-align: center;
+  border-radius: 8px;
+}
+
+.future {
+  background: #DC143C !important;
+  color: #FFFF99 !important;
+  animation: flash 0.5s infinite;
+}
+
+@keyframes flash {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+#next-btn {
+  background: #9ACD32;
+  color: #8B4513;
+  border: 5px solid #DC143C;
+  padding: 20px 40px;
+  font-size: 2rem;
+  font-family: 'Impact', sans-serif;
+  cursor: pointer;
+  margin: 30px auto 0 auto;
+  display: block;
+  border-radius: 10px;
+}

@@ -1,0 +1,112 @@
+body {
+    font-family: 'Brush Script MT', cursive;
+    background: linear-gradient(45deg, #9ACD32, #FFFF99, #B0E0E6);
+    color: #8B4513;
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+h1 {
+    font-size: 3rem;
+    text-shadow: 3px 3px 0px #DC143C;
+    text-align: center;
+    animation: wobble 2s infinite;
+}
+
+@keyframes wobble {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+}
+
+#instructions {
+    font-family: 'Courier New', monospace;
+    font-size: 1.2rem;
+    color: #DC143C;
+    text-align: center;
+    background: #FFFF99;
+    padding: 10px;
+    border: 5px dashed #8B4513;
+    margin: 20px 0;
+}
+
+#text-display {
+    background: #696969;
+    color: #FFFF99;
+    padding: 15px;
+    margin: 20px 0;
+    font-size: 1.5rem;
+    border: 3px solid #DC143C;
+}
+
+#keyboard {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 5px;
+    margin: 30px 0;
+}
+
+.key {
+    background: #B0E0E6;
+    color: #8B4513;
+    border: 2px solid #DC143C;
+    padding: 15px;
+    text-align: center;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.key:hover, .key.hover {
+    background: #9ACD32;
+    transform: scale(1.2);
+    box-shadow: 0 0 20px #DC143C;
+}
+
+#clear-btn {
+    grid-column: span 2;
+    background: #DC143C;
+    color: #FFFF99;
+}
+
+#cursor {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background: #DC143C;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1000;
+    border: 3px solid #FFFF99;
+}
+
+#fan {
+    position: absolute;
+    font-size: 3rem;
+    cursor: grab;
+    user-select: none;
+    z-index: 999;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+#continue-btn {
+    background: #9ACD32;
+    color: #8B4513;
+    border: 5px solid #DC143C;
+    padding: 15px 30px;
+    font-size: 1.5rem;
+    font-family: 'Impact', sans-serif;
+    cursor: pointer;
+    margin: 20px auto;
+    display: block;
+}
+
+#continue-btn:hover {
+    background: #FFFF99;
+    transform: rotate(-5deg);
+}
